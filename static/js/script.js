@@ -1,58 +1,22 @@
-// Initialize and add the map
-let map;
-let chosenRoute;
-const form = document.getElementById("form");
-form.addEventListener("submit", submitForm);
-function submitForm() {
-  chosenRoute = document.getElementById("busNumber").value;
-  console.log(chosenRoute);
-  getData(chosenRoute);
-  event.preventDefault();
-}
-
-function getData(route) {
-  let myBuses = [];
+function loadMap(buses) {
   let data = [];
-  axios
-    .get("https://ckan2.multimediagdansk.pl/gpsPositions?v=2")
-    .then(function (response) {
-      for (const key in response["data"]["vehicles"]) {
-        let item = response["data"]["vehicles"][key];
-        if (item["routeShortName"] == route) {
-          myBuses.push(item);
-        }
-      }
-    })
-    .catch(function (error) {
-      console.log("Error: " + error);
-    })
-    .finally(function () {
-      for (bus in myBuses) {
-        console.log(bus);
-        data.push({
-          position: {
-            lat: myBuses[bus]["lat"],
-            lng: myBuses[bus]["lon"],
-          },
-          tripId: myBuses[bus]["tripId"],
-          angle: myBuses[bus]["direction"],
-          headsign: myBuses[bus]["headsign"],
-        });
-      }
-      console.log(data);
-      initMap(data);
+  for (bus in buses) {
+    data.push({
+      position: {
+        lat: parseFloat(buses[bus]["lat"]),
+        lng: parseFloat(buses[bus]["lon"]),
+      },
+      tripId: buses[bus]["tripId"],
+      angle: buses[bus]["direction"],
+      headsign: buses[bus]["headsign"],
     });
+  }
+  initMap(data);
 }
 
 async function initMap(data) {
-  if (data.length == 0) {
-    map = document.getElementById("noBuses");
-    map.innerHTML = "<h1>No buses " + chosenRoute + " at this time.</h1>";
-    return;
-  } else {
-    map = document.getElementById("noBuses");
-    map.innerHTML = "";
-  }
+  let map = document.getElementById("map");
+  map.innerHTML = "";
   // Request needed libraries.
   const { Map } = await google.maps.importLibrary("maps");
   const { AdvancedMarkerElement } = await google.maps.importLibrary("marker");
@@ -88,11 +52,11 @@ async function initMap(data) {
 
     let destLat, destLng;
     destLat =
-      0.00002 *
+      0.00003 *
       data[bus]["position"]["lat"] *
       Math.cos(data[bus]["angle"] * (Math.PI / 180));
     destLng =
-      0.0002 *
+      0.0003 *
       data[bus]["position"]["lng"] *
       Math.sin(data[bus]["angle"] * (Math.PI / 180));
     destLat += data[bus]["position"]["lat"];

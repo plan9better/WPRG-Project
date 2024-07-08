@@ -1,2 +1,0 @@
-let map;
-let chosenRoute;

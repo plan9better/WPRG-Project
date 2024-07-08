@@ -33,9 +33,9 @@ class Bus
             throw new Exception("Property '$name' does not exist");
         }
     }
-    public static function getActive()
+    public static function getInfo()
     {
-        include "secret/MYSQL.php";
+        include "/var/www/html/project/secret/MYSQL.php";
 
         $conn = new mysqli(
             $MYSQL_SERVERNAME,
@@ -47,13 +47,41 @@ class Bus
         if ($conn->connect_error) {
             die("Connection failed: " . $conn->connect_error);
         }
-        $sql = "SELECT name FROM Active";
+        $sql =
+            "select * from Bus inner join Vehicles on Bus.vehicleCode=Vehicles.VehicleCode;";
         $result = $conn->query($sql);
 
         $active = [];
         if ($result->num_rows > 0) {
             while ($row = $result->fetch_assoc()) {
-                array_push($active, $row["name"]);
+                array_push($active, $row);
+            }
+        }
+        $conn->close();
+
+        return $active;
+    }
+    public static function getActive()
+    {
+        include "/var/www/html/project/secret/MYSQL.php";
+
+        $conn = new mysqli(
+            $MYSQL_SERVERNAME,
+            $MYSQL_USERNAME,
+            $MYSQL_PASSWORD,
+            $MYSQL_DBNAME
+        );
+        // Check connection
+        if ($conn->connect_error) {
+            die("Connection failed: " . $conn->connect_error);
+        }
+        $sql = "SELECT routeShortName FROM Bus";
+        $result = $conn->query($sql);
+
+        $active = [];
+        if ($result->num_rows > 0) {
+            while ($row = $result->fetch_assoc()) {
+                array_push($active, $row["routeShortName"]);
             }
         }
         $conn->close();
@@ -72,5 +100,32 @@ class Bus
             }
         }
         return $unique;
+    }
+    public static function getVehiclesByRoute($route)
+    {
+        include "/var/www/html/project/secret/MYSQL.php";
+
+        $conn = new mysqli(
+            $MYSQL_SERVERNAME,
+            $MYSQL_USERNAME,
+            $MYSQL_PASSWORD,
+            $MYSQL_DBNAME
+        );
+        // Check connection
+        if ($conn->connect_error) {
+            echo "Connection failed: " . $conn->connect_error;
+        }
+        $sql = "SELECT * FROM Bus where routeShortName = $route";
+        $result = $conn->query($sql);
+
+        $vehicles = [];
+        if ($result->num_rows > 0) {
+            while ($row = $result->fetch_assoc()) {
+                array_push($vehicles, $row);
+            }
+        }
+        $conn->close();
+
+        return $vehicles;
     }
 }
