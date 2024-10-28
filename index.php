@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html>
-<?php include "/var/www/html/project/Bus.php"; ?>
+<?php include "Bus.php"; ?>
 <head>
     <title>Bus tracker</title>
     <link rel="stylesheet" href="static/css/index_wtf.css" />
@@ -8,7 +8,7 @@
 </head>
 
 <body>
-    <?php include "/var/www/html/project/nav.php"; ?>
+    <?php include "nav.php"; ?>
     <div id="container">
     <form id="form" method="post" action="search.php">
         <select id="bus" name="bus">

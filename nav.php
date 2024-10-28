@@ -1,5 +1,5 @@
 <?php
-include "/var/www/html/project/User.php"; ?>
+include "User.php"; ?>
 <nav>
     <a href="index.php">Home</a>
 <?php 

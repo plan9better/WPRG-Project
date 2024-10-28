@@ -1,26 +1,22 @@
 <!DOCTYPE html>
-<?php include "Bus.php"; ?>
+<?php include "/var/www/html/project/Bus.php"; ?>
 <html>
 <head>
     <meta charset="UTF-8">
-    <!-- TomTom Maps API -->
-    <meta name='viewport'
-          content='width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no'/>
-    <link rel='stylesheet' type='text/css' href='https://api.tomtom.com/maps-sdk-for-web/cdn/6.x/6.25.1/maps/maps.css'>
-    <!-- <link rel='stylesheet' type='text/css' href='../assets/ui-library/index.css'/> -->
+
+    <!-- MAPS API KEY -->
+    <script src="secret/API_KEY.js"></script>
+    <!-- MAPS API -->
+    <script>(g => { var h, a, k, p = "The Google Maps JavaScript API", c = "google", l = "importLibrary", q = "__ib__", m = document, b = window; b = b[c] || (b[c] = {}); var d = b.maps || (b.maps = {}), r = new Set, e = new URLSearchParams, u = () => h || (h = new Promise(async (f, n) => { await (a = m.createElement("script")); e.set("libraries", [...r] + ""); for (k in g) e.set(k.replace(/[A-Z]/g, t => "_" + t[0].toLowerCase()), g[k]); e.set("callback", c + ".maps." + q); a.src = `https://maps.${c}apis.com/maps/api/js?` + e; d[q] = f; a.onerror = () => h = n(Error(p + " could not load.")); a.nonce = m.querySelector("script[nonce]")?.nonce || ""; m.head.append(a) })); d[l] ? console.warn(p + " only loads once. Ignoring:", g) : d[l] = (f, ...n) => r.add(f) && u().then(() => d[l](f, ...n)) })
+    ({ key: API_KEY, v: "weekly" });</script>
 
     <script src="static/js/script.js"></script>
     <link rel="stylesheet" href="static/css/search_wtf.css">
     <link rel="stylesheet" href="static/css/nav.css">
     <title>Bus tracker</title>
-    <style>
-        #map {
-            height: 500px;
-            width: 100%;
-        }
-    </style>
 </head>
 <body>
+
     <?php
     include "nav.php";
     if (!isset($_REQUEST["bus"])) {
@@ -32,21 +28,9 @@
         <h1>Map of active vehicles on route <?php echo htmlentities(
             $_REQUEST["bus"]
         ); ?></h1>
-            <div id='map' class='map'></div>
-    <script src='https://api.tomtom.com/maps-sdk-for-web/cdn/6.x/6.25.1/maps/maps-web.min.js'></script>
-    <script type='text/javascript' src='mobile-or-tablet.js'></script>
-    <script>
-        API_KEY='azN4CwJpbcnMQr89Smid2eTMJkqRgcf7'
-        var map = tt.map({
-            key: API_KEY,
-            container: 'map',
-            dragPan: !isMobileOrTablet(),
-            center: [4.952129606368089, 52.31404857051368],
-        });
-        map.addControl(new tt.FullscreenControl());
-        map.addControl(new tt.NavigationControl());
-    </script>
+        <div id="map"></div>
     </div>
+
 <?php
 $bus = Bus::getVehiclesByRoute(htmlentities($_REQUEST["bus"]));
 while (empty($bus)) {
@@ -56,6 +40,7 @@ while (empty($bus)) {
 $enc = json_encode($bus);
 echo "<script>localStorage.setItem('key', '$enc');</script>";
 ?>
+
 <div id="table">
     <h1>Every active vehicle at this time</h1>
     <table>
@@ -94,36 +79,10 @@ echo "<script>localStorage.setItem('key', '$enc');</script>";
     </table>
 </div>
 <script type="text/javascript">
-// const bus = JSON.parse(localStorage.getItem('key'));
+ bus = JSON.parse(localStorage.getItem('key'));
+ loadMap(bus);
 
-// function loadMap(busData) {
-//     // Initialize TomTom map
-//     const map = tt.map({
-//         key: API_KEY,
-//         container: 'map',
-//         center: [busData[0].lon, busData[0].lat], // Center on first bus
-//         zoom: 12
-//     });
-
-//     // Add markers for each bus
-//     busData.forEach(vehicle => {
-//         const marker = new tt.Marker()
-//             .setLngLat([vehicle.lon, vehicle.lat])
-//             .addTo(map);
-
-//         // Add popup with bus info
-//         const popup = new tt.Popup({offset: 30})
-//             .setHTML(`
-//                 <strong>Route: ${vehicle.routeShortName}</strong><br>
-//                 Direction: ${vehicle.headsign}<br>
-//                 Speed: ${vehicle.speed} km/h
-//             `);
-
-//         marker.setPopup(popup);
-//     });
-// }
-
-// loadMap(bus);
 </script>
+
 </body>
 </html>

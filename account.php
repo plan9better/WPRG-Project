@@ -6,8 +6,8 @@
     <link rel="stylesheet" href="static/css/nav.css">
 </head>
 <body>
-<?php include "/var/www/html/project/nav.php";
-include "/var/www/html/project/Bus.php"
+<?php include "nav.php";
+include "Bus.php"
  ?>
 <div id="container">
     <form method="post" action="account.php">

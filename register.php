@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html>
-<?php include "/var/www/html/project/Bus.php";
+<?php include "Bus.php";
 // Included later in nav.php
 // include "/var/www/html/project/User.php";
 ?>
@@ -11,7 +11,7 @@
 </head>
 
 <body>
-    <?php include "/var/www/html/project/nav.php"; ?>
+    <?php include "nav.php"; ?>
 
     <div id="container">
     <fieldset>

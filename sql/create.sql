@@ -1,5 +1,5 @@
 CREATE TABLE Routes (
-    id INT NOT NULL AUTO_INCREMENT,
+    id INT NOT NULL AUTOINCREMENT,
     routeId INT,
     agencyId INT NOT NULL,
     shortName VARCHAR(255) NOT NULL,
@@ -11,7 +11,7 @@ CREATE TABLE Routes (
 
 -- generated is a keyword in mysql so i settled for gen
 create table Bus(
-  id INT NOT NULL AUTO_INCREMENT,
+  id INT NOT NULL AUTOINCREMENT,
   gen VARCHAR(32), -- generated is a keyword in mysql so i settled for gen
   routeShortName VARCHAR(64),
   tripId INT,

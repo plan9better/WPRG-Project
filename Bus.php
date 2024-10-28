@@ -1,14 +1,16 @@
 <?php
 class Bus
 {
-    private $routeName;
-    private $lat;
-    private $lon;
-    private $speed;
-    private $destination;
+    private $routeName, $lat, $lon, $speed, $destination, $conn;
+    private static $DB_PATH = 'analytics.sqlite';
 
     public function __construct($routeName, $lat, $lon, $speed, $destination)
     {
+        $this->conn = new SQLite3(self::$DB_PATH, SQLITE3_OPEN_CREATE | SQLITE3_OPEN_READWRITE);
+        if (!$this->conn) {
+            die("Connection failed: " . $this->conn->lastErrorMsg());
+        }
+
         $this->routeName = $routeName;
         $this->lat = $lat;
         $this->lon = $lon;
@@ -33,99 +35,76 @@ class Bus
             throw new Exception("Property '$name' does not exist");
         }
     }
+
     public static function getInfo()
     {
-        include "/var/www/html/project/secret/MYSQL.php";
-
-        $conn = new mysqli(
-            $MYSQL_SERVERNAME,
-            $MYSQL_USERNAME,
-            $MYSQL_PASSWORD,
-            $MYSQL_DBNAME
-        );
-        // Check connection
-        if ($conn->connect_error) {
-            die("Connection failed: " . $conn->connect_error);
+        $db = new SQLite3(self::$DB_PATH, SQLITE3_OPEN_READONLY);
+        if (!$db) {
+            return [];
         }
-        $sql =
-            "select * from Bus inner join Vehicles on Bus.vehicleCode=Vehicles.VehicleCode;";
-        $result = $conn->query($sql);
 
+        $sql = "SELECT * FROM Bus INNER JOIN Vehicles ON Bus.vehicleCode = Vehicles.VehicleCode";
+        $result = $db->query($sql);
         $active = [];
-        if ($result->num_rows > 0) {
-            while ($row = $result->fetch_assoc()) {
-                array_push($active, $row);
-            }
-        }
-        $conn->close();
 
+        while ($row = $result->fetchArray(SQLITE3_ASSOC)) {
+            $active[] = $row;
+        }
+
+        $db->close();
         return $active;
     }
+
     public static function getActive()
     {
-        include "/var/www/html/project/secret/MYSQL.php";
-
-        $conn = new mysqli(
-            $MYSQL_SERVERNAME,
-            $MYSQL_USERNAME,
-            $MYSQL_PASSWORD,
-            $MYSQL_DBNAME
-        );
-        // Check connection
-        if ($conn->connect_error) {
-            die("Connection failed: " . $conn->connect_error);
+        $db = new SQLite3(self::$DB_PATH, SQLITE3_OPEN_READONLY);
+        if (!$db) {
+            return [];
         }
+
         $sql = "SELECT routeShortName FROM Bus";
-        $result = $conn->query($sql);
-
+        $result = $db->query($sql);
         $active = [];
-        if ($result->num_rows > 0) {
-            while ($row = $result->fetch_assoc()) {
-                array_push($active, $row["routeShortName"]);
-            }
-        }
-        $conn->close();
 
+        while ($row = $result->fetchArray(SQLITE3_ASSOC)) {
+            $active[] = $row['routeShortName'];
+        }
+
+        $db->close();
         return $active;
     }
+
     public static function getUniqueActive()
     {
-        $unique = [];
-        $active = Bus::getActive();
-        foreach ($active as $bus) {
-            if (isset($unique[$bus])) {
-                $unique[$bus] += 1;
-            } else {
-                $unique[$bus] = 1;
-            }
-        }
+        $active = self::getActive();
+        $unique = array_count_values($active);
         return $unique;
     }
+
     public static function getVehiclesByRoute($route)
     {
-        include "/var/www/html/project/secret/MYSQL.php";
-
-        $conn = new mysqli(
-            $MYSQL_SERVERNAME,
-            $MYSQL_USERNAME,
-            $MYSQL_PASSWORD,
-            $MYSQL_DBNAME
-        );
-        // Check connection
-        if ($conn->connect_error) {
-            echo "Connection failed: " . $conn->connect_error;
+        $db = new SQLite3(self::$DB_PATH, SQLITE3_OPEN_READONLY);
+        if (!$db) {
+            return [];
         }
-        $sql = "SELECT * FROM Bus where routeShortName = $route";
-        $result = $conn->query($sql);
 
+        $stmt = $db->prepare("SELECT * FROM Bus WHERE routeShortName = :route");
+        $stmt->bindValue(':route', $route, SQLITE3_TEXT);
+        $result = $stmt->execute();
         $vehicles = [];
-        if ($result->num_rows > 0) {
-            while ($row = $result->fetch_assoc()) {
-                array_push($vehicles, $row);
-            }
-        }
-        $conn->close();
 
+        while ($row = $result->fetchArray(SQLITE3_ASSOC)) {
+            $vehicles[] = $row;
+        }
+
+        $db->close();
         return $vehicles;
+    }
+
+    public function __destruct()
+    {
+        if ($this->conn) {
+            $this->conn->close();
+        }
     }
 }
