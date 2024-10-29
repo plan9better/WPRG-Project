@@ -1,23 +1,19 @@
-CREATE TABLE Routes (
-    id INT NOT NULL AUTOINCREMENT,
-    routeId INT,
+CREATE TABLE Route(
+    routeId INT PRIMARY KEY NOT NULL UNIQUE,
     agencyId INT NOT NULL,
     shortName VARCHAR(255) NOT NULL,
     longName VARCHAR(255) NOT NULL,
     activationDate DATE NOT NULL,
-    routeType ENUM('BUS', 'TRAM', 'UNKNOWN', 'FERRY') NOT NULL,
-    PRIMARY KEY(id)
+    routeType TEXT CHECK(routeType IN ('BUS', 'TRAM', 'UNKNOWN'))
 );
 
--- generated is a keyword in mysql so i settled for gen
 create table Bus(
-  id INT NOT NULL AUTOINCREMENT,
+  vehicleCode VARCHAR(64) PRIMARY KEY NOT NULL UNIQUE,
   gen VARCHAR(32), -- generated is a keyword in mysql so i settled for gen
   routeShortName VARCHAR(64),
   tripId INT,
   routeId INT,
   headsign VARCHAR(64),
-  vehicleCode VARCHAR(16),
   vehicleService VARCHAR(32),
   vehicleId INT,
   speed INT,
@@ -26,11 +22,10 @@ create table Bus(
   scheduledTripStartTime VARCHAR(32),
   lat FLOAT,
   lon FLOAT,
-  gpsQuality INT,
-  PRIMARY KEY(id)
+  gpsQuality INT
 );
 
-CREATE TABLE Sessions(
+CREATE TABLE Session(
     id INT NOT NULL,
     userId int NOT NULL,
     token varchar(32),
@@ -40,8 +35,8 @@ CREATE TABLE Sessions(
 );
 
 CREATE TABLE ExtendedInfo(
+    vehicleCode VARCHAR(64) PRIMARY KEY NOT NULL UNIQUE,
     photo VARCHAR(255),
-    vehicleCode VARCHAR(255) PRIMARY KEY,
     carrier VARCHAR(255),
     transportationType VARCHAR(255),
     vehicleCharacteristics VARCHAR(255),
@@ -68,9 +63,9 @@ CREATE TABLE ExtendedInfo(
     url VARCHAR(255),
     passengersDoors INT
 );
-CREATE TABLE Vehicles (
+CREATE TABLE Vehicle(
+    VehicleCode INT NOT NULL PRIMARY KEY UNIQUE,
     Photo VARCHAR(50) NOT NULL,
-    VehicleCode VARCHAR(10) NOT NULL PRIMARY KEY,
     Carrier VARCHAR(100) NOT NULL,
     TransportationType VARCHAR(50) NOT NULL,
     VehicleCharacteristics VARCHAR(50) NOT NULL,
