@@ -1,87 +1,50 @@
-<!DOCTYPE html>
-<html>
+<!doctype html>
+<html lang="en">
+
 <?php include "Bus.php"; ?>
+
 <head>
-    <title>Bus tracker</title>
-    <link rel="stylesheet" href="static/css/index_wtf.css" />
-    <link rel="stylesheet" href="static/css/nav.css">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bus Tracker</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300..700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            grotesk: ['Space Grotesk', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
 </head>
 
 <body>
-    <?php include "nav.php"; ?>
-    <div id="container">
-    <form id="form" method="post" action="search.php">
-        <select id="bus" name="bus">
-            <?php foreach (Bus::getUniqueActive() as $k => $v) {
-                echo "<option>" . $k . "</option>";
-            } ?>
-        </select>
-        <input type="submit" value="submit">
-    </form>
-    <h1>Choose a line number above to see their live positions</h1>
+  <!-- Primary navigation -->
+  <?php include "nav.php"; ?>
 
-    <div id="table">
-        <h1>Every active vehicle at this time</h1>
-        <table>
-            <tr>
-                <td>Route</td>
-                <td>Headsign</td>
-                <td>Patron</td>
-                <td>Floor height</td>
-                <td>Kneeling mechanism</td>
-                <td>Wheelchairs ramp</td>
-                <td>USB</td>
-                <td>Bike Holders</td>
-                <td>Ticket Machine</td>
-                <td>Passenger doors</td>
-                <td>Link</td>
-            </tr>
-                <?php if (isset($_GET["filter"])) {
-                    foreach (Bus::getInfo() as $v) {
-                        if ($v["routeShortName"] == $_GET["filter"]) {
-                            echo "<tr>";
-                            $route = $v["routeShortName"];
-                            $headsign = $v["headsign"];
-                            $patron =
-                                $v["Patron"] == "brak" ? "None" : $v["Patron"];
-                            $floor = $v["FloorHeight"];
-                            $kneel =
-                                $v["KneelingMechanism"] == 1 ? "Yes" : "No";
-                            $ramp = $v["WheelchairsRamp"] == 1 ? "Yes" : "No";
-                            $usb = $v["USB"] == 1 ? "Yes" : "No";
-                            $bike = $v["BikeHolders"] == 1 ? "Yes" : "No";
-                            $tickets = $v["TicketMachine"] == 1 ? "Yes" : "No";
-                            $doors = $v["PassengersDoors"] == 1 ? "Yes" : "No";
-                            $link = $v["URL"];
-                            echo "<td><a href='search.php?bus=$route'>$route</a></td><td>$headsign</td><td>$patron</td><td>$floor</td><td>$kneel</td><td>$ramp</td><td>$usb</td><td>$bike</td><td>$tickets</td><td>$doors</td>";
-                            echo "<td><a href='$link'>Info</a></td>";
-                            echo "</tr>";
-                        }
-                    }
-                } else {
-                    foreach (Bus::getInfo() as $v) {
-                        echo "<tr>";
-                        $route = $v["routeShortName"];
-                        $headsign = $v["headsign"];
-                        $patron =
-                            $v["Patron"] == "brak" ? "None" : $v["Patron"];
-                        $floor = $v["FloorHeight"];
-                        $kneel = $v["KneelingMechanism"] == 1 ? "Yes" : "No";
-                        $ramp = $v["WheelchairsRamp"] == 1 ? "Yes" : "No";
-                        $usb = $v["USB"] == 1 ? "Yes" : "No";
-                        $bike = $v["BikeHolders"] == 1 ? "Yes" : "No";
-                        $tickets = $v["TicketMachine"] == 1 ? "Yes" : "No";
-                        $doors = $v["PassengersDoors"] == 1 ? "Yes" : "No";
-                        $link = $v["URL"];
-                        echo "<td><a href='search.php?bus=$route'>$route</a></td><td>$headsign</td><td>$patron</td><td>$floor</td><td>$kneel</td><td>$ramp</td><td>$usb</td><td>$bike</td><td>$tickets</td><td>$doors</td>";
-                        echo "<td><a href='$link'>Info</a></td>";
-                        echo "</tr>";
-                    }
-                } ?>
-        </table>
-    </div>
-    </div>
+  <main>
+    <!-- Jumbotron -->
+    <?php include "jumbotron.php"; ?>
 
+    <!-- Call to action -->
+    <section class="bg-[#55f458] px-8">
+      <div class="container mx-auto flex flex-col items-center py-16 text-center gap-8">
+        <h2 class="font-grotesk font-black text-4xl">Save your favorite routes and <br> get personalized alerts!</h2>
+        <button class="block bg-black text-white p-4 rounded-md font-grotesk text-lg font-medium transition-transform active:scale-95 hover:bg-black/80">Sign up now</button>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-black p-32">
+    <div class="container mx-auto">
+    </div>
+  </footer>
 </body>
-
 </html>
