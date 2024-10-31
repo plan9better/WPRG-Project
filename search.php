@@ -37,14 +37,30 @@
     <script type='text/javascript' src='mobile-or-tablet.js'></script>
     <script>
         API_KEY='azN4CwJpbcnMQr89Smid2eTMJkqRgcf7'
+        const gdansk = [18.638306, 54.372158];
         var map = tt.map({
             key: API_KEY,
             container: 'map',
             dragPan: !isMobileOrTablet(),
-            center: [4.952129606368089, 52.31404857051368],
+            center: gdansk,
+            zoom: 10,
         });
         map.addControl(new tt.FullscreenControl());
         map.addControl(new tt.NavigationControl());
+        const marker = new tt.Marker().setLngLat(gdansk).addTo(map);
+        var popupOffsets = {
+        //   top: [0, 0],
+          bottom: [0, -40],
+        //   "bottom-right": [0, 70],
+        //   "bottom-left": [0, 70],
+        //   left: [10, 10],
+        //   right: [-25, -35],
+        }
+
+        var popup = new tt.Popup({ offset: popupOffsets }).setHTML(
+          "your company name, your company address"
+        )
+        marker.setPopup(popup).togglePopup()
     </script>
     </div>
 <?php
