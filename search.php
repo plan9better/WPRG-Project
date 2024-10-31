@@ -18,6 +18,12 @@
             height: 500px;
             width: 100%;
         }
+        #marker {
+          background-image: url("static/img/bus-small.png");
+          background-size: cover;
+          width: 50px;
+          height: 17px;
+        }
     </style>
 </head>
 <body>
@@ -29,39 +35,9 @@
     }
     ?>
     <div id="content">
-        <h1>Map of active vehicles on route <?php echo htmlentities(
-            $_REQUEST["bus"]
-        ); ?></h1>
-            <div id='map' class='map'></div>
-    <script src='https://api.tomtom.com/maps-sdk-for-web/cdn/6.x/6.25.1/maps/maps-web.min.js'></script>
-    <script type='text/javascript' src='mobile-or-tablet.js'></script>
-    <script>
-        API_KEY='azN4CwJpbcnMQr89Smid2eTMJkqRgcf7'
-        const gdansk = [18.638306, 54.372158];
-        var map = tt.map({
-            key: API_KEY,
-            container: 'map',
-            dragPan: !isMobileOrTablet(),
-            center: gdansk,
-            zoom: 10,
-        });
-        map.addControl(new tt.FullscreenControl());
-        map.addControl(new tt.NavigationControl());
-        const marker = new tt.Marker().setLngLat(gdansk).addTo(map);
-        var popupOffsets = {
-        //   top: [0, 0],
-          bottom: [0, -40],
-        //   "bottom-right": [0, 70],
-        //   "bottom-left": [0, 70],
-        //   left: [10, 10],
-        //   right: [-25, -35],
-        }
-
-        var popup = new tt.Popup({ offset: popupOffsets }).setHTML(
-          "your company name, your company address"
-        )
-        marker.setPopup(popup).togglePopup()
-    </script>
+        <h1>Map of active vehicles on route <?php echo htmlentities($_REQUEST["bus"]); ?>
+        </h1>
+        <div id='map' class='map'></div>
     </div>
 <?php
 $bus = Bus::getVehiclesByRoute(htmlentities($_REQUEST["bus"]));
@@ -109,37 +85,10 @@ echo "<script>localStorage.setItem('key', '$enc');</script>";
             } ?>
     </table>
 </div>
-<script type="text/javascript">
-// const bus = JSON.parse(localStorage.getItem('key'));
-
-// function loadMap(busData) {
-//     // Initialize TomTom map
-//     const map = tt.map({
-//         key: API_KEY,
-//         container: 'map',
-//         center: [busData[0].lon, busData[0].lat], // Center on first bus
-//         zoom: 12
-//     });
-
-//     // Add markers for each bus
-//     busData.forEach(vehicle => {
-//         const marker = new tt.Marker()
-//             .setLngLat([vehicle.lon, vehicle.lat])
-//             .addTo(map);
-
-//         // Add popup with bus info
-//         const popup = new tt.Popup({offset: 30})
-//             .setHTML(`
-//                 <strong>Route: ${vehicle.routeShortName}</strong><br>
-//                 Direction: ${vehicle.headsign}<br>
-//                 Speed: ${vehicle.speed} km/h
-//             `);
-
-//         marker.setPopup(popup);
-//     });
-// }
-
-// loadMap(bus);
+<script src='https://api.tomtom.com/maps-sdk-for-web/cdn/6.x/6.25.1/maps/maps-web.min.js'></script>
+<script type='text/javascript' src='mobile-or-tablet.js'></script>
+<script>
+loadMap(JSON.parse(localStorage.getItem('key')));
 </script>
 </body>
 </html>
